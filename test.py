@@ -260,14 +260,16 @@ class GcdTest:
 
     def res(self, d1, d2):
         def g(d1,d2):
-            if d1==0 or d2==0:
+            if d1==0 and d2==0:
                 return 0
-            if d1<d2:
+            elif d1==0 or d2==0:
+                return max(d1,d2)
+            elif d1<d2:
                 g(d2,d1)
             while d1%d2!=0:
                 d1,d2=d2,d1%d2
-                # print(d1,d2)
             return d2
+        
         try:
             ans = str(g(d1,d2))
             p.stdin.write("7\n")
