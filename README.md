@@ -2,9 +2,14 @@
 
 ## Under Work
 
-## Usage
+## Installation
 
-```py
+```
+pip install -r requirements.txt
+```
+
+## Usage
+```
 python3 test.py -p <path_to_implementation> -n <n_tests>
 ```
 
