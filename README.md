@@ -18,3 +18,8 @@ Look inside the log folder for details about any erors
 Time taken includes time taken by python to compute the value
 
 
+
+## Issues
+
+Broken pipe error occurs due to seg fault, this script doesnt capture the input for that however
+
