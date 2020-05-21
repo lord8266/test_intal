@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "intal.h"
-#define c_len 3000
+#define c_len 10000
 int main(){
     char s1[1000];
     char s2[1000];

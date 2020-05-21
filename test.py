@@ -5,7 +5,6 @@ import logging
 import os
 import argparse
 import sys
-import time
 from progress.bar import Bar
 parser = argparse.ArgumentParser()
 parser.add_argument('-p',help="Path to your implentation file")
@@ -19,18 +18,23 @@ logging.basicConfig(level=logging.INFO, filename=os.path.join(dir_path,'log',str
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-def get_impl(path):
+def compile(path):
     cmd = f"gcc -g -I{dir_path} {dir_path}/test.c {path} -o {dir_path}/impl"
     c =subprocess.Popen(cmd,shell=True)
     c.communicate()
-    return subprocess.Popen(
+
+def load_proc():
+    global p
+    p= subprocess.Popen(
             f"{dir_path}/impl", 
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             universal_newlines=True,
             bufsize=1)
-    
-p =  get_impl(args.p)
+
+compile(args.p)
+load_proc()
+
 N = int(args.n)
 M=int(str(1)+"0"*500)
       
@@ -50,16 +54,26 @@ class AddTest:
         ]
     def res(self, d1, d2):
         ans = str(d1+d2)
-        p.stdin.write("1\n")
-        p.stdin.write(str(d1)+'\n')
-        p.stdin.write(str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.errorbug(f'Add: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("1\n")
+            p.stdin.write(str(d1)+'\n')
+            p.stdin.write(str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.errorbug(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
             return False
 
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
+            return False
+        
 class DiffTest:
     def __init__(self,bound_l=0,bound_r=M):
         self.bound_l = bound_l
@@ -76,14 +90,23 @@ class DiffTest:
 
     def res(self, d1, d2):
         ans = str(abs(d1-d2))
-        p.stdin.write("2\n")
-        p.stdin.write(str(d1)+'\n')
-        p.stdin.write(str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.errorbug(f'Add: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("2\n")
+            p.stdin.write(str(d1)+'\n')
+            p.stdin.write(str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.errorbug(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class CmpTest:
@@ -101,13 +124,23 @@ class CmpTest:
 
     def res(self, d1, d2):
         ans =str(0 if d1==d2 else 1 if d1>d2 else -1)
-        p.stdin.write("3\n")
-        p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Cmp: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("3\n")
+            p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class MulTest:
@@ -125,13 +158,23 @@ class MulTest:
 
     def res(self, d1, d2):
         ans =str(d1*d2)
-        p.stdin.write("4\n")
-        p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Mul: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("4\n")
+            p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class ModTest:
@@ -149,13 +192,23 @@ class ModTest:
 
     def res(self, d1, d2):
         ans =str(d1%d2)
-        p.stdin.write("5\n")
-        p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Mod: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("5\n")
+            p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class PowTest:
@@ -172,13 +225,24 @@ class PowTest:
 
     def res(self, d1, d2):
         ans =str(d1**d2)
-        p.stdin.write("6\n")
-        p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Pow: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            p.stdin.write("6\n")
+            p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+
+        except Exception as e:
+            logger.error(f'{self.name}: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class GcdTest:
@@ -204,14 +268,25 @@ class GcdTest:
                 d1,d2=d2,d1%d2
                 # print(d1,d2)
             return d2
-        ans = str(g(d1,d2))
-        p.stdin.write("7\n")
-        p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Gcd: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            ans = str(g(d1,d2))
+            p.stdin.write("7\n")
+            p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'Gcd: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+
+        except BrokenPipeError:
+            logger.error(f'Gcd: {d1} {d2} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'Gcd: {d1} {d2} {e}')
+            load_proc()
             return False
 
 class FactorialTest:
@@ -230,15 +305,25 @@ class FactorialTest:
             for i in range(2,n+1):
                 c*=i
             return c
+        try:
+            ans = str(g(n))
+            p.stdin.write("8\n")
+            p.stdin.write(str(n)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'Fact: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+
+        except BrokenPipeError:
+            logger.error(f'Fact: {n} Seg Fault')
+            load_proc()
+            return False
         
-        ans = str(g(n))
-        p.stdin.write("8\n")
-        p.stdin.write(str(n)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Fact: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+        except Exception as e:
+            logger.error(f'Fact: {n} {e}')
+            load_proc()
             return False
 
 class FibonacciTest:
@@ -257,17 +342,27 @@ class FibonacciTest:
             for i in range(2,n+1):
                 a,b = b,a+b
             return b
-        
-        ans = str(g(n))
-        p.stdin.write("9\n")
-        p.stdin.write(str(n)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'Fib: {n} Expected: {ans}, Recieved: {ret[:-1]}')
-            return False
+        try:
+            ans = str(g(n))
+            p.stdin.write("9\n")
+            p.stdin.write(str(n)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'Fib: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
 
+        except BrokenPipeError:
+            logger.error(f'Fib: {n} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'Fib: {n} {e}')
+            load_proc()
+            return False
+        
 class BinCoefTest:
     def __init__(self,bound_l=0,bound_r=M):
         self.bound_l = bound_l
@@ -285,17 +380,26 @@ class BinCoefTest:
             for i in range(1,n+1):
                 c*=i
             return c
-        
-        ans = str(int(f(n)//f(k)//f(n-k)))
-        p.stdin.write("10\n")
-        p.stdin.write(str(n)+'\n')
-        p.stdin.write(str(k)+'\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'{self.name}: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            ans = str(int(f(n)//f(k)//f(n-k)))
+            p.stdin.write("10\n")
+            p.stdin.write(str(n)+'\n')
+            p.stdin.write(str(k)+'\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {n} Seg Fault')
+            load_proc()
             return False
+        except Exception as e:
+            logger.error(f'{self.name}: {n} {e}')
+            load_proc()
+            return False
+
 class CoinRowTest:
     def __init__(self,bound_l=1000,bound_r=2000,max_val=M):
         self.bound_l = bound_l
@@ -318,19 +422,30 @@ class CoinRowTest:
             for i in range(2,len(coins)+1):
                 table[i] = max(coins[i-1] + table[i - 2], table[i - 1])
             return table[len(coins)]
+        try:
+            ans = str(f())
+            p.stdin.write("11\n")
+            p.stdin.write(str(len(coins))+'\n')
+            for i in coins:
+                p.stdin.write(f'{i} ')
+            p.stdin.write('\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {" ".join(map(str,coins))} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
 
-        ans = str(f())
-        p.stdin.write("11\n")
-        p.stdin.write(str(len(coins))+'\n')
-        for i in coins:
-            p.stdin.write(f'{i} ')
-        p.stdin.write('\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'{self.name}: {" ".join(map(str,coins))} Expected: {ans}, Recieved: {ret[:-1]}')
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {" ".join(map(str,coins))} Seg Fault')
+            load_proc()
             return False
+        
+        except Exception as e:
+            logger.error(f'{self.name}: {" ".join(map(str,coins))} {e}')
+            load_proc()
+            return False
+
 
 class SearchTest:
     def __init__(self,bound_l=1000,bound_r=2000,max_val=M,name='lin_search'):
@@ -357,18 +472,28 @@ class SearchTest:
         else:
             t='13\n'
             data.sort()
-        ans = str(f())
-        p.stdin.write(t)
-        p.stdin.write(str(len(data))+'\n')
-        p.stdin.write(str(key)+'\n')
-        for i in data:
-            p.stdin.write(f'{i} ')
-        p.stdin.write('\n')
-        ret = p.stdout.readline()
-        if (key not in data and ret[:-1]=="-1") or (data[int(ret[:-1])]==key):
-            return True
-        else:
-            logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            ans = str(f())
+            p.stdin.write(t)
+            p.stdin.write(str(len(data))+'\n')
+            p.stdin.write(str(key)+'\n')
+            for i in data:
+                p.stdin.write(f'{i} ')
+            p.stdin.write('\n')
+            ret = p.stdout.readline()
+            if (key not in data and ret[:-1]=="-1") or (data[int(ret[:-1])]==key):
+                return True
+            else:
+                logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} {e}')
+            load_proc()
             return False
 
 class MaxMinTest:
@@ -392,20 +517,29 @@ class MaxMinTest:
                return data.index(max(data))
             else:
                 return data.index(min(data))
-
-        ans = str(f())
-        t = "14\n" if self.name.startswith("ma") else "15\n"
-        # print(t)
-        p.stdin.write(t)
-        p.stdin.write(str(len(data))+'\n')
-        for i in data:
-            p.stdin.write(f'{i} ')
-        p.stdin.write('\n')
-        ret = p.stdout.readline()
-        if ret[:-1]==ans:
-            return True
-        else:
-            logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+        try:
+            ans = str(f())
+            t = "14\n" if self.name.startswith("ma") else "15\n"
+            # print(t)
+            p.stdin.write(t)
+            p.stdin.write(str(len(data))+'\n')
+            for i in data:
+                p.stdin.write(f'{i} ')
+            p.stdin.write('\n')
+            ret = p.stdout.readline()
+            if ret[:-1]==ans:
+                return True
+            else:
+                logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {" ".join(map(str,data))} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'{self.name}: {" ".join(map(str,data))} {e}')
+            load_proc()
             return False
 
 class SortTest:
@@ -426,18 +560,28 @@ class SortTest:
     def res(self,data):
         def f():
             return " ".join(map(str,sorted(data)))
+        try:
+            ans = f()
+            p.stdin.write("16\n")
+            p.stdin.write(str(len(data))+'\n')
+            for i in data:
+                p.stdin.write(f'{i} ')
+            p.stdin.write('\n')
+            ret = p.stdout.readline()
+            if ret.strip()==ans.strip():
+                return True
+            else:
+                logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+                return False
 
-        ans = f()
-        p.stdin.write("16\n")
-        p.stdin.write(str(len(data))+'\n')
-        for i in data:
-            p.stdin.write(f'{i} ')
-        p.stdin.write('\n')
-        ret = p.stdout.readline()
-        if ret.strip()==ans.strip():
-            return True
-        else:
-            logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
+        except BrokenPipeError:
+            logger.error(f'{self.name}: {" ".join(map(str,data))} Seg Fault')
+            load_proc()
+            return False
+        
+        except Exception as e:
+            logger.error(f'{self.name}: {" ".join(map(str,data))} {e}')
+            load_proc()
             return False
 
 # bound_l = minimum number of elements
@@ -446,7 +590,7 @@ class SortTest:
 # might take long if you give very high values
 # max_val by default = 10^500
 # look at each class for more information
-
+# array based tests can have a max bound_r of 10000, to change this change c_len defined in test.c
 tests = [
     AddTest(),
     DiffTest(),
