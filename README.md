@@ -2,15 +2,13 @@
 
 ## How it works
 
-The script takes the path to your implementation file and compiles it with the header and the custom test code 
-included in this repository
+The script takes the path to your implementation file and compiles it with the header and the custom test code included in this repository
 
 The compiled code is saved as "impl" on the same folder as the python script
 
-Then the scipt runs numerous tests to verify output your code provides
+Then the script runs numerous tests to verify output your code provides
 
-All the errors including time data is printed and also saved inside the log folder which will be created when 
-you run the script for the first time
+All the errors including time data are printed and also saved inside the log folder which will be created when you run the script for the first time
 
 A unique log file is saved each time you run the script with its filename being
 
