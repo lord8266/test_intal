@@ -589,9 +589,9 @@ class SortTest:
             return False
 
 
-#For two number based
-# bound_l = max_val of random number
-# bound_r = min_val of random number
+#For one/two number based
+# bound_l = min_val of random number
+# bound_r = max_val of random number
 # by default bound_l=0, bound_r=10^500
 
 # For array based tests
@@ -600,6 +600,7 @@ class SortTest:
 # max_val = maximal value of element (0, max_val)
 # might take long if you give very high values
 # max_val by default = 10^500
+# by default bound_l=1000,bound_r=2000
 # look at each class for more information
 # array based tests can have a max bound_r of 10000, to change this change c_len defined in test.c
 tests = [

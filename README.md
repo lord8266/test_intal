@@ -24,11 +24,11 @@ Time taken includes time taken by python to compute the value
 
 ## Tweaking
 
-### For two number based
+### For one/two number based tests
 
-bound_l = max_val of random number
+bound_l = min_val of random number
 
-bound_r = min_val of random number
+bound_r = max_val of random number
 
 by default bound_l=0, bound_r=10^500
 
@@ -43,6 +43,8 @@ max_val = maximal value of element (0, max_val)
 might take long if you give very high values
 
 max_val by default = 10^500
+
+by default bound_l=1000,bound_r=2000
 
 look at each class for more information
 
