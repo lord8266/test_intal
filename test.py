@@ -224,7 +224,7 @@ class PowTest:
         self.res(0,d1)]
 
     def res(self, d1, d2):
-        ans =str(d1**d2)
+        ans =str(d1**d2) if d1!=0 else 0
         try:
             p.stdin.write("6\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
