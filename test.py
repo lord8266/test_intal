@@ -62,7 +62,7 @@ class AddTest:
             if ret[:-1]==ans:
                 return True
             else:
-                logger.errorbug(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
+                logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
                 return False
         except BrokenPipeError:
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
