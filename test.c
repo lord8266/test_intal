@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "intal.h"
+#include <time.h>
 #define c_len 10000
+
 int main(){
     char s1[1000];
     char s2[1000];
@@ -15,6 +17,8 @@ int main(){
     while (1){
         int c;
         scanf("%d",&c);
+        clock_t start, end;
+        start = clock();
         if (c==1){
             scanf("%s",s1);
             scanf("%s",s2);
@@ -140,6 +144,9 @@ int main(){
         else {
             break;
         }
+        end=clock();
+        double t = (((double) (end - start))/CLOCKS_PER_SEC)*1000;
+        printf("%f\n",t);
         fflush(stdout);
     } 
     for (int i=0;i<c_len;i++){

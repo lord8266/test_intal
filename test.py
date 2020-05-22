@@ -14,7 +14,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 os.makedirs(os.path.join(dir_path,'log'),exist_ok=True)
 logger = logging.getLogger("test")
-logging.basicConfig(level=logging.INFO, filename=os.path.join(dir_path,'log',str(time.time())), filemode='w')
+logging.basicConfig(level=logging.INFO, filename=os.path.join(dir_path,'log',str(time.time()).replace(".","") ), filemode='w')
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -55,24 +55,29 @@ class AddTest:
     def res(self, d1, d2):
         ans = str(d1+d2)
         try:
+            start_time =time.time()
             p.stdin.write("1\n")
             p.stdin.write(str(d1)+'\n')
             p.stdin.write(str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
+            
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
 
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
         
 class DiffTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -91,23 +96,28 @@ class DiffTest:
     def res(self, d1, d2):
         ans = str(abs(d1-d2))
         try:
+            start_time =time.time()
             p.stdin.write("2\n")
             p.stdin.write(str(d1)+'\n')
             p.stdin.write(str(d2)+'\n')
+
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.errorbug(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class CmpTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -125,23 +135,28 @@ class CmpTest:
     def res(self, d1, d2):
         ans =str(0 if d1==d2 else 1 if d1>d2 else -1)
         try:
+            start_time =time.time()
             p.stdin.write("3\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
+                
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
 
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class MulTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -159,23 +174,27 @@ class MulTest:
     def res(self, d1, d2):
         ans =str(d1*d2)
         try:
+            start_time =time.time()
             p.stdin.write("4\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class ModTest:
     def __init__(self,bound_l=1,bound_r=M):
@@ -193,23 +212,27 @@ class ModTest:
     def res(self, d1, d2):
         ans =str(d1%d2)
         try:
+            start_time =time.time()
             p.stdin.write("5\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
 
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class PowTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -226,24 +249,28 @@ class PowTest:
     def res(self, d1, d2):
         ans =str(d1**d2) if d1!=0 else "0"
         try:
+            start_time =time.time()
             p.stdin.write("6\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
             
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
 
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class GcdTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -269,27 +296,30 @@ class GcdTest:
             while d1%d2!=0:
                 d1,d2=d2,d1%d2
             return d2
-        
+        ans = str(g(d1,d2))
         try:
-            ans = str(g(d1,d2))
+            start_time =time.time()
             p.stdin.write("7\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'Gcd: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
 
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Gcd: {d1} {d2} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Gcd: {d1} {d2} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class FactorialTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -309,24 +339,28 @@ class FactorialTest:
             return c
         try:
             ans = str(g(n))
+            start_time =time.time()
             p.stdin.write("8\n")
             p.stdin.write(str(n)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'Fact: {n} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
 
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Fact: {n} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Fact: {n} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class FibonacciTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -348,24 +382,28 @@ class FibonacciTest:
             return b
         try:
             ans = str(g(n))
+            start_time=time.time()
             p.stdin.write("9\n")
             p.stdin.write(str(n)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'Fib: {n} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
 
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Fib: {n} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'Fib: {n} {e}')
             load_proc()
-            return False
+            return False,time_taken
         
 class BinCoefTest:
     def __init__(self,bound_l=0,bound_r=M):
@@ -386,23 +424,28 @@ class BinCoefTest:
             return c
         try:
             ans = str(int(f(n)//f(k)//f(n-k)))
+            start_time=time.time()
             p.stdin.write("10\n")
             p.stdin.write(str(n)+'\n')
             p.stdin.write(str(k)+'\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {n} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
+
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {n} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {n} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class CoinRowTest:
     def __init__(self,bound_l=1000,bound_r=2000,max_val=M):
@@ -420,35 +463,39 @@ class CoinRowTest:
     def res(self,coins):
         def f():
             table = [0]*(len(coins)+1)
-            table[0] = 0;
-            table[1] = coins[0];
+            table[0] = 0
+            table[1] = coins[0]
 
             for i in range(2,len(coins)+1):
                 table[i] = max(coins[i-1] + table[i - 2], table[i - 1])
             return table[len(coins)]
         try:
             ans = str(f())
+            start_time=time.time()
             p.stdin.write("11\n")
             p.stdin.write(str(len(coins))+'\n')
             for i in coins:
                 p.stdin.write(f'{i} ')
             p.stdin.write('\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {" ".join(map(str,coins))} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
 
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,coins))} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,coins))} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 
 class SearchTest:
@@ -478,6 +525,7 @@ class SearchTest:
             data.sort()
         try:
             ans = str(f())
+            start_time=time.time()
             p.stdin.write(t)
             p.stdin.write(str(len(data))+'\n')
             p.stdin.write(str(key)+'\n')
@@ -485,20 +533,22 @@ class SearchTest:
                 p.stdin.write(f'{i} ')
             p.stdin.write('\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ans==ret[:-1]:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
             logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class MaxMinTest:
     def __init__(self,bound_l=1000,bound_r=2000,max_val=M,name='max'):
@@ -523,6 +573,7 @@ class MaxMinTest:
                 return data.index(min(data))
         try:
             ans = str(f())
+            start_time=time.time()
             t = "14\n" if self.name.startswith("ma") else "15\n"
             # print(t)
             p.stdin.write(t)
@@ -531,20 +582,23 @@ class MaxMinTest:
                 p.stdin.write(f'{i} ')
             p.stdin.write('\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret[:-1]==ans:
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,data))} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,data))} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 class SortTest:
     def __init__(self,bound_l=1000,bound_r=2000,max_val=M):
@@ -566,27 +620,31 @@ class SortTest:
             return " ".join(map(str,sorted(data)))
         try:
             ans = f()
+            start_time=time.time()
             p.stdin.write("16\n")
             p.stdin.write(str(len(data))+'\n')
             for i in data:
                 p.stdin.write(f'{i} ')
             p.stdin.write('\n')
             ret = p.stdout.readline()
+            t = float(p.stdout.readline())
             if ret.strip()==ans.strip():
-                return True
+                return True,t
             else:
                 logger.error(f'{self.name}: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
-                return False
+                return False,t
 
         except BrokenPipeError:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,data))} Seg Fault')
             load_proc()
-            return False
+            return False,time_taken
         
         except Exception as e:
+            time_taken = (time.time()-start_time)*1000
             logger.error(f'{self.name}: {" ".join(map(str,data))} {e}')
             load_proc()
-            return False
+            return False,time_taken
 
 
 #For one/two number based
@@ -628,17 +686,16 @@ for t in tests:
         max_time,min_time=-1,10000000000000
         avg_time =0
         for i in range(N):
-            time_start = time.time()
             ret = t.run()
-            time_taken = (time.time()-time_start)*1000
-            if time_taken>max_time:
-                max_time = time_taken
-            if time_taken<min_time:
-                min_time = time_taken
-            avg_time+=time_taken
-            tot+=len(ret)
-            score += sum(ret)
-            bar.next()
+            for status,time_taken in ret:
+                if time_taken>max_time:
+                    max_time = time_taken
+                if time_taken<min_time:
+                    min_time = time_taken
+                tot+=1
+                score+=status
+                avg_time+=time_taken
+                bar.next()
         bar.finish()
         score_data =f'{t.name}: {score} / {tot} correct'
         time_data = f'{t.name}: Time Taken Avg: {avg_time/tot}ms Min: {min_time}ms Max: {max_time}ms'
