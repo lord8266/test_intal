@@ -224,7 +224,7 @@ class PowTest:
         self.res(0,d1)]
 
     def res(self, d1, d2):
-        ans =str(d1**d2) if d1!=0 else 0
+        ans =str(d1**d2) if d1!=0 else "0"
         try:
             p.stdin.write("6\n")
             p.stdin.write(str(d1)+'\n'+str(d2)+'\n')
@@ -234,7 +234,7 @@ class PowTest:
             else:
                 logger.error(f'{self.name}: {d1} {d2} Expected: {ans}, Recieved: {ret[:-1]}')
                 return False
-        
+            
         except BrokenPipeError:
             logger.error(f'{self.name}: {d1} {d2} Seg Fault')
             load_proc()
@@ -608,7 +608,7 @@ tests = [
     DiffTest(bound_r=100),
     MulTest(bound_r=100),
     ModTest(bound_r=100),
-    PowTest(bound_r=1000),
+    PowTest(bound_r=100),
     GcdTest(bound_r=100),
     FactorialTest(bound_r=100),
     FibonacciTest(bound_r=1000),
