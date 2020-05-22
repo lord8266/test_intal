@@ -695,7 +695,7 @@ for t in tests:
                 tot+=1
                 score+=status
                 avg_time+=time_taken
-                bar.next()
+            bar.next()
         bar.finish()
         score_data =f'{t.name}: {score} / {tot} correct'
         time_data = f'{t.name}: Time Taken Avg: {avg_time/tot}ms Min: {min_time}ms Max: {max_time}ms'
