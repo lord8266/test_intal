@@ -1,6 +1,22 @@
 # Tester for the Intal library
 
-## Under Work
+## How it works
+
+The script takes the path to your implementation file and compiles it with the header and the custom test code 
+included in this repository
+
+The compiled code is saved as "impl" on the same folder as the python script
+
+Then the scipt runs numerous tests to verify output your code provides
+
+All the errors including time data is printed and also saved inside the log folder which will be created when 
+you run the script for the first time
+
+A unique log file is saved each time you run the script with its filename being
+
+```py
+time.time()
+```
 
 ## Installation
 
@@ -19,9 +35,6 @@ python3 test.py -p <path_to_implementation> -n <n_tests>
 Look inside the log folder for details about any erors
 
 Copy the input from the log and debug your code
-
-Time taken includes time taken by python to compute the value
-
 
 ## Tweaking
 
