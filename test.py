@@ -485,7 +485,7 @@ class SearchTest:
                 p.stdin.write(f'{i} ')
             p.stdin.write('\n')
             ret = p.stdout.readline()
-            if (key not in data and ret[:-1]=="-1") or (data[int(ret[:-1])]==key):
+            if ans==ret[:-1]:
                 return True
             else:
                 logger.error(f'{self.name}: Key: {key} Data: {" ".join(map(str,data))} Expected: {ans}, Recieved: {ret[:-1]}')
