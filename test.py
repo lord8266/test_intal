@@ -433,17 +433,17 @@ class BinCoefTest:
             if ret[:-1]==ans:
                 return True,t
             else:
-                logger.error(f'{self.name}: {n} Expected: {ans}, Recieved: {ret[:-1]}')
+                logger.error(f'{self.name}: {n} {k} Expected: {ans}, Recieved: {ret[:-1]}')
                 return False,t
 
         except BrokenPipeError:
             time_taken = (time.time()-start_time)*1000
-            logger.error(f'{self.name}: {n} Seg Fault')
+            logger.error(f'{self.name}: {n} {k} Seg Fault')
             load_proc()
             return False,time_taken
         except Exception as e:
             time_taken = (time.time()-start_time)*1000
-            logger.error(f'{self.name}: {n} {e}')
+            logger.error(f'{self.name}: {n} {k} {e}')
             load_proc()
             return False,time_taken
 
@@ -670,7 +670,7 @@ tests = [
     GcdTest(bound_r=100),
     FactorialTest(bound_r=100),
     FibonacciTest(bound_r=1000),
-    BinCoefTest(bound_r=500),
+    BinCoefTest(bound_r=1000),
     MaxMinTest(bound_l=5,bound_r=10,name='max',max_val=20),
     MaxMinTest(bound_l=5,bound_r=10,name='min',max_val=20),
     SearchTest(bound_l=5,bound_r=10,name='lin_search',max_val=20),
