@@ -178,7 +178,7 @@ class MulTest:
             return False
 
 class ModTest:
-    def __init__(self,bound_l=0,bound_r=M):
+    def __init__(self,bound_l=1,bound_r=M):
         self.bound_l = bound_l
         self.bound_r = bound_r
         self.name="mod"
@@ -588,20 +588,27 @@ class SortTest:
             load_proc()
             return False
 
+
+#For two number based
+# bound_l = max_val of random number
+# bound_r = min_val of random number
+# by default bound_l=0, bound_r=10^500
+
+# For array based tests
 # bound_l = minimum number of elements
 # bound_r = maximum number of elements
-# max_val = maximal value of element
+# max_val = maximal value of element (0, max_val)
 # might take long if you give very high values
 # max_val by default = 10^500
 # look at each class for more information
 # array based tests can have a max bound_r of 10000, to change this change c_len defined in test.c
 tests = [
-    AddTest(),
-    DiffTest(),
-    MulTest(),
-    ModTest(),
+    AddTest(bound_r=100),
+    DiffTest(bound_r=100),
+    MulTest(bound_r=100),
+    ModTest(bound_r=100),
     PowTest(bound_r=1000),
-    GcdTest(),
+    GcdTest(bound_r=100),
     FactorialTest(bound_r=100),
     FibonacciTest(bound_r=1000),
     BinCoefTest(bound_r=500),
