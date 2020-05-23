@@ -236,7 +236,7 @@ class ModTest:
 
 class PowTest:
     def __init__(self,bound_l=0,bound_r=M):
-        self.bound_l = bound_l
+        self.bound_l = bound_l+1
         self.bound_r = bound_r
         self.name="pow"
     def run(self):
